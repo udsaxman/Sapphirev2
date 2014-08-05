@@ -10,11 +10,10 @@ function CheckAccess($pagename)
 			From
 				Access
 			Where
-				access_page = ".$pagename;
+				access_page = '".$pagename."'";
 
         $result = $mysqli->query($sql);
         $RankResult = mysqli_fetch_assoc($result);
-        $result->free();
         Return $RankResult['access_power'];
 
 }
@@ -32,7 +31,7 @@ function CheckOpActive($opID)
 
     $result = $mysqli->query($sql);
     $isactive= mysqli_fetch_assoc($result);
-    $result->free();
+
     if ($isactive['Liveop_Active'] == 1){
         return true;
     }else{
