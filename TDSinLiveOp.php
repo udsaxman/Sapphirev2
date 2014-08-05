@@ -15,8 +15,9 @@ include('header.html');
                           method="">
                 <fieldset>
                             <legend>TDSIN LiveOps Tracker</legend>
-                                          <?php
-                            include 'connection.php';
+<?php
+include 'connection.php';
+include 'functions.php';
         //Login Check
         if (isset($_SESSION["userID"])) {
             echo "<br />";
@@ -64,6 +65,15 @@ include('header.html');
                     echo "<td>" . $op['LiveOp_JoinTime'] . "</tr>";
                     echo "</tr>";
                     echo "</table>";
+
+                    echo "<input type = 'submit' name='leave' id='leave' value = 'Leave Op'  />";
+
+                    if(isset($_REQUEST['leave']))
+                    {
+                        LeaveOp($_SESSION["current_op"], $_SESSION["userID"]);
+                        header("Refresh:0");
+                    }
+
                 }else{
                     //op is no longer active, unset session variablet to send user back to list
                     unset($_SESSION["current_op"]);
@@ -95,18 +105,11 @@ include('header.html');
 
                 echo "<input type = 'submit' value = 'Join'  />";
 
-                if (isset($_REQUEST["selOp"])) {
+                if (isset($_REQUEST['selOp'])) {
                 //code to join op
 
-                    $selOp = $_REQUEST["selOp"];
-                   // echo "request recieved";
-                    $user_id = $_SESSION["userID"];
-                    $sql = "CALL sp_JoinLiveOp(" . $selOp . ", " . $user_id . ")";
-                    //echo $sql;
-                    if($mysqli->query($sql) === TRUE){
-                    $_SESSION['current_op'] = $selOp;
-                    //echo $_SESSION['current_op']."set";
-                    }
+                    JoinOp($_REQUEST['selOp'],$_SESSION['userID']);
+
                 }
             }
         }else {
