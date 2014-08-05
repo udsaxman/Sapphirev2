@@ -21,45 +21,53 @@ include('header.html');
         if (isset($_SESSION["userID"])) {
             echo "<br />";
             //echo $_SESSION['current_op'];
+
             if (isset($_SESSION['current_op']))
             {
                 $user_id = $_SESSION["userID"];
                 $currentOp = $_SESSION["current_op"];
+                //check that op is still active
+                if(CheckOpActive($currentOp)){
 
-                $sql = "select LiveOp_Name, LiveOp_Shares, LiveOp_Start, LiveOp_JoinTime, LiveOp_Sites, Users.user_name as FC from LiveOps JOIN LiveOp_Attendance on LiveOps.LiveOp_ID = LiveOp_Attendance.LiveOp_ID JOIN Users on LiveOps.LiveOp_FC_ID = Users.user_id WHERE member_id = " . $user_id." AND LiveOps.LiveOp_ID = ". $currentOp;
-                $result = $mysqli->query($sql);
-                $op = $result->fetch_assoc();
-                $result->free();
 
-//                echo "<br />";
-                echo "Op Information";
-                echo "<br />";
-                echo "<table class='Display' border=''>";
-                echo "<tr>";
-                echo "<td>Op Name</td>";
-                echo "<td>" . $op['LiveOp_Name'] . "</tr>";
-                echo "</tr>";
-                echo "<tr>";
-                echo "<td>FC</td>";
-                echo "<td>" .$op['FC'] . "</tr>";
-                echo "</tr>";
-                echo "<tr>";
-                echo "<td>Fleet Start Time</td>";
-                echo "<td>" . $op['LiveOp_Start'] . "</tr>";
-                echo "</tr>";
-                echo "<tr>";
-                echo "<td>Total Sites Completed</td>";
-                echo "<td>" . $op['LiveOp_Sites'] . "</tr>";
-                echo "</tr>";
-                echo "<tr>";
-                echo "<td>Sites you have been here for</td>";
-                echo "<td>" . $op['LiveOp_Shares'] . "</tr>";
-                echo "</tr>";
-                echo "<tr>";
-                echo "<td>You joined the fleet at</td>";
-                echo "<td>" . $op['LiveOp_JoinTime'] . "</tr>";
-                echo "</tr>";
-                echo "</table>";
+                    $sql = "select LiveOp_Name, LiveOp_Shares, LiveOp_Start, LiveOp_JoinTime, LiveOp_Sites, Users.user_name as FC from LiveOps JOIN LiveOp_Attendance on LiveOps.LiveOp_ID = LiveOp_Attendance.LiveOp_ID JOIN Users on LiveOps.LiveOp_FC_ID = Users.user_id WHERE member_id = " . $user_id." AND LiveOps.LiveOp_ID = ". $currentOp;
+                    $result = $mysqli->query($sql);
+                    $op = $result->fetch_assoc();
+                    $result->free();
+
+    //                echo "<br />";
+                    echo "Op Information";
+                    echo "<br />";
+                    echo "<table class='Display' border=''>";
+                    echo "<tr>";
+                    echo "<td>Op Name</td>";
+                    echo "<td>" . $op['LiveOp_Name'] . "</tr>";
+                    echo "</tr>";
+                    echo "<tr>";
+                    echo "<td>FC</td>";
+                    echo "<td>" .$op['FC'] . "</tr>";
+                    echo "</tr>";
+                    echo "<tr>";
+                    echo "<td>Fleet Start Time</td>";
+                    echo "<td>" . $op['LiveOp_Start'] . "</tr>";
+                    echo "</tr>";
+                    echo "<tr>";
+                    echo "<td>Total Sites Completed</td>";
+                    echo "<td>" . $op['LiveOp_Sites'] . "</tr>";
+                    echo "</tr>";
+                    echo "<tr>";
+                    echo "<td>Sites you have been here for</td>";
+                    echo "<td>" . $op['LiveOp_Shares'] . "</tr>";
+                    echo "</tr>";
+                    echo "<tr>";
+                    echo "<td>You joined the fleet at</td>";
+                    echo "<td>" . $op['LiveOp_JoinTime'] . "</tr>";
+                    echo "</tr>";
+                    echo "</table>";
+                }else{
+                    //op is no longer active, unset session variablet to send user back to list
+                    unset($_SESSION["current_op"]);
+                }
 
 
             }else{
