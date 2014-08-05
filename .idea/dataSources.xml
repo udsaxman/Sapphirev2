@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" hash="229677816">
+    <data-source source="LOCAL" name="MySQL - sapphire@174.34.159.156" uuid="ff02b928-bf8b-45b0-acbe-19804bd40498">
+      <driver-ref>mysql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://174.34.159.156:3306/sapphire</jdbc-url>
+      <user-name>udsaxman</user-name>
+      <user-password>dfd9dfdddfcfdfcfdfdedfc4dfcfdfd8</user-password>
+      <driver-properties>
+        <property name="zeroDateTimeBehavior" value="convertToNull" />
+        <property name="tinyInt1isBit" value="false" />
+      </driver-properties>
+      <libraries />
+    </data-source>
+  </component>
+</project>
+

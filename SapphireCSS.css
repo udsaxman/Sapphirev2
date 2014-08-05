@@ -1,0 +1,152 @@
+@charset "utf-8";
+/* CSS Document */
+
+.SapphireCSS {
+    font-family: Tahoma, Geneva, sans-serif;
+    font-size: 18px;
+    color: #FFF;
+    text-decoration: none;
+    background-color: #000;
+    background-position: center center;
+}
+
+.SapphireCSS a:link {
+    font-style: normal;
+    color: #FFF;
+
+}
+
+.SapphireCSS a:visited {
+    font-style: normal;
+    color: #FFF;
+}
+
+.SapphireCSS body {
+    background-image: url(./images/thin-background.png);
+    background-repeat: repeat;
+    background-position: center;
+}
+
+#sapphire-top {
+    position: relative;
+    left: 0px;
+    top: 0px;
+    width: 1024px;
+    height: 182px;
+    background-image: url(images/sapphire_top.png);
+    background-position: center;
+}
+
+#sapphire {
+    position: relative;
+    left: -357px;
+    top: 00px;
+    width: 310px;
+    height: 39px;
+}
+
+#login {
+    position: relative;
+    left: -170px;
+    top: -39px;
+    width: 63px;
+    height: 39px;
+}
+
+#home {
+    position: relative;
+    left: -105px;
+    top: -78px;
+    width: 67px;
+    height: 39px;
+}
+
+#mypage {
+    position: relative;
+    left: -22px;
+    top: -117px;
+    width: 99px;
+    height: 39px;
+}
+
+#viewops {
+    position: relative;
+    left: 81px;
+    top: -156px;
+    width: 107px;
+    height: 39px;
+}
+
+#admin {
+    position: relative;
+    left: 175px;
+    top: -195px;
+    width: 82px;
+    height: 39px;
+}
+
+#right {
+    position: relative;
+    left: 364px;
+    top: -234px;
+    width: 296px;
+    height: 39px;
+}
+
+#content_area {
+    position: relative;
+    top: -234px;
+    width: 1024px;
+    color: white;
+    background-image: url(images/bottom.png);
+    overflow: auto;
+    background-repeat: no-repeat;
+}
+
+.Negative span {
+    color: #F00;
+}
+
+span {
+    color: #F00;
+}
+
+.Display {
+    background-color: #000;
+}
+
+.Display td {
+    border: thin solid #FFF;
+    margin: 4px;
+    padding: 4px;
+}
+
+.Tower {
+    background-color: #000;
+    float: left;
+}
+
+.Tower td {
+    border: thin solid #FFF;
+    margin: 4px;
+    padding: 4px;
+}
+
+footer {
+    font-family: Tahoma, Geneva, sans-serif;
+    font-size: 10px;
+    font-style: italic;
+}
+
+.DisplayBlue {
+    color: #0FF;
+}
+
+.DisplayYellow {
+    color: #FF0;
+}
+
+.DisplayWhite {
+    color: #FFF;
+    text-decoration: none;
+}
