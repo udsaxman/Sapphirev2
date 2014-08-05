@@ -1,9 +1,9 @@
 <?php
 
-
+include 'connection.php';
 function CheckAccess($pagename)
 {
-    include 'connection.php';
+    global $mysqli;
 
     $sql = "Select
 				access_power
@@ -14,13 +14,14 @@ function CheckAccess($pagename)
 
         $result = $mysqli->query($sql);
         $RankResult = mysqli_fetch_assoc($result);
+        $result->free();
         Return $RankResult['access_power'];
 
 }
 
 function CheckOpActive($opID)
 {
-    include 'connection.php';
+    global $mysqli;
 
     $sql = "SELECT
                 LiveOp_Active
@@ -31,11 +32,41 @@ function CheckOpActive($opID)
 
     $result = $mysqli->query($sql);
     $isactive= mysqli_fetch_assoc($result);
+    $result->free();
     if ($isactive['Liveop_Active'] == 1){
         return true;
     }else{
         return false;
     }
 
+}
+
+function LeaveOp($opID, $memberID)
+{
+    global $mysqli;
+
+    $sql = "CALL sp_LeaveLiveOp(" . $opID. ", " . $memberID . ")";
+
+    if($mysqli->query($sql) === TRUE){
+        //player has left op, unset session variable
+        unset($_SESSION["current_op"]);
+    }
+}
+function JoinOp($opID, $memberID)
+{
+    global $mysqli;
+
+    $sql = "CALL sp_JoinLiveOp(" . $opID. ", " . $memberID . ")";
+    //echo $sql;
+    if($mysqli->query($sql) === TRUE){
+        $_SESSION["current_op"] = memebrID;
+        //echo $_SESSION["current_op"]."set";
+    }
+    $sql = "CALL sp_LeaveLiveOp(" . $opID. ", " . $memberID . ")";
+
+    if($mysqli->query($sql) === TRUE){
+        //player has left op, unset session variable
+        unset($_SESSION["current_op"]);
+    }
 }
 ?>
