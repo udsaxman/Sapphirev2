@@ -21,22 +21,10 @@ include('header.html');
 
 
                             include 'connection.php';
-
+                            include 'functions.php';
                             $powerRequired = 100;
 
-                            $sql = "Select
-						access_power
-					From
-						Access
-					Where
-						access_page = 'edit_access'";
-
-                            $result = $mysqli->query($sql);
-
-                            $RankResult = mysqli_fetch_array($result, MYSQL_ASSOC);
-
-                            $powerRequired = $RankResult['access_power'];
-
+                            $powerRequired = CheckAccess('edit_access');
 
                             if (isset($_SESSION["userName"]) && $_SESSION["userName"] != "") {
                                 $theName = $_SESSION["userName"];
@@ -54,34 +42,21 @@ include('header.html');
 
                             function AccessGranted($adminName)
                             {
-                                global $conn;
+                                global $mysqli;
 
-                                $accessList[0] = "";
-                                $accessIdArray[0] = 0;
-                                $accessPowerArray[0] = 0;
-                                $accessCount = 0;
+                                   $sql = "Select
+                                              access_id, access_page, access_power
+                                           From
+                                              Access";
 
-                                $sql = "Select
-							access_id, access_page, access_power
-						From
-							Access";
 
-                                $result = mysql_query($sql, $conn) or die(mysql_error());
+                                $result = $mysqli->query($sql);
 
-                                while ($row = mysql_fetch_assoc($result)) {
-                                    foreach ($row as $name => $value) {
-                                        if ($name == "access_id") {
-                                            $accessIdArray[$accessCount] = $value;
-                                        }
-                                        if ($name == "access_page") {
-                                            $accessList[$accessCount] = $value;
-                                        }
-                                        if ($name == "access_power") {
-                                            $accessPowerArray[$accessCount] = $value;
-                                            $accessCount++;
-                                        }
-                                    }
+                                while ($row = $result->fetch_array(MYSQLI_BOTH)) {
+                                    $AccessLevels[] = $row;
                                 }
+                                $result->free();
+
 
                                 echo "<input type ='text' readonly='readonly' name ='warning' size='70' value ='Be Careful with how you set these values or people might complain!!!' />";
 
@@ -90,7 +65,7 @@ include('header.html');
 
                                 echo "<br />";
                                 echo "<label>Your Username:</label>";
-                                echo "<input type ='text' readonly='readonly' name ='adminName' value ='" . $adminName . "' />";
+                                echo $adminName;
                                 echo "<br />";
                                 echo "<br />";
 
@@ -102,13 +77,19 @@ include('header.html');
                                 echo "<th>New Power</th>";
                                 echo "</tr>";
 
-                                for ($x = 0; $x < $accessCount; $x++) {
+                                //$accessCount = count($AccessLevels["access_id"]);
+
+                                foreach($AccessLevels as $access){
                                     echo "<tr>";
-                                    echo "<td>" . $accessList[$x] . "</td>";
-                                    echo "<td><input type ='text' readonly='readonly' name ='currentPower" . $x . "' value ='" . $accessPowerArray[$x] . "' /></td>";
-                                    echo "<td><input type ='text' name ='newPower" . $x . "' value ='" . $accessPowerArray[$x] . "' /></td>";
+                                    echo "<td>" . $access['access_page'] . "</td>";
+                                    echo "<td>" . $access['access_power'] . "</td>";
+                                    echo "<input type='hidden' name='newPower[".$access['access_id']."][id]' value ='".$access['access_id']."'/></td>";
+                                    //create an array of access values  - way easier than counting stuff
+                                    echo "<td><input type ='text' name ='newPower[".$access['access_id']."][power]' value ='" . $access['access_power'] . "' /></td>";
                                     echo "</tr>";
+
                                 }
+
                                 echo "</table>";
 
                                 echo "<br />";
