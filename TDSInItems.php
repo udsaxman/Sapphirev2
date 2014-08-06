@@ -24,24 +24,8 @@ include 'connection.php';
 include 'functions.php';
 $powerRequired = 100;
 
-//$sql = "Select
-//								access_power
-//							From
-//								Access
-//							Where
-//								access_page = 'edit_items'";
-//
-//$result = mysql_query($sql, $conn) or die(mysql_error());
-//
-//while ($row = mysql_fetch_assoc($result)) {
-//    foreach ($row as $name => $value) {
-//        if ($name == "access_power") {
-//            $powerRequired = $value;
-//        }
-//    }
-//}
-
 $powerRequired = CheckAccess('edit_items');
+
 if (isset($_SESSION["power"])) {
     if ($_SESSION["power"] >= $powerRequired) {
         AccessGranted();
@@ -54,76 +38,40 @@ if (isset($_SESSION["power"])) {
 
 function AccessGranted()
 {
-    $itemId[0] = 0;
-    $itemName[0] = "None";
-    $itemType[0] = 0;
-    $itemValue[0] = 0;
-    $itemOrder[0] = 0;
-    $itemCount = 0;
+    global $mysqli;
 
+    $sql = "SELECT
+              item_id,
+              item_name,
+              item_type,
+              item_iskValue,
+              item_order
+            FROM Items";
+    $result = $mysqli->query($sql);
 
-    $categoryOrder[0] = 0;
-    $categoryTax[0] = 0;
-    $categoryOverride[0] = 0;
-
-
-    global $conn, $categoryCount, $categoryIds, $categoryName;
-
-    $sql = "SELECT * FROM Items order by item_order";
-    $result = mysql_query($sql, $conn) or die(mysql_error());
-
-    while ($row = mysql_fetch_assoc($result)) {
-        foreach ($row as $name => $value) {
-            if ($name == "item_id") {
-                $itemId[$itemCount] = $value;
-            }
-            if ($name == "item_name") {
-                $itemName[$itemCount] = $value;
-            }
-            if ($name == "item_type") {
-                $itemType[$itemCount] = $value;
-            }
-            if ($name == "item_iskValue") {
-                $itemValue[$itemCount] = $value;
-            }
-            if ($name == "item_order") {
-                $itemOrder[$itemCount] = $value;
-                $itemCount++;
-            }
-
-        }
+    while ($row = $result->fetch_array(MYSQLI_BOTH)) {
+        $Items[] = $row;
     }
+    $result->free();
 
     $sql = "select * from Item_Category order by category_order";
-    $result = mysql_query($sql, $conn) or die(mysql_error());
 
-    while ($row = mysql_fetch_assoc($result)) {
-        foreach ($row as $name => $value) {
-            if ($name == "category_id") {
-                $categoryIds[$categoryCount] = $value;
-            }
-            if ($name == "category_name") {
-                $categoryName[$categoryCount] = $value;
-            }
-            if ($name == "category_order") {
-                $categoryOrder[$categoryCount] = $value;
-            }
-            if ($name == "category_taxOverride") {
-                $categoryTax[$categoryCount] = $value;
-            }
-            if ($name == "category_useOverride") {
-                $categoryOverride[$categoryCount] = $value;
-                $categoryCount++;
-            }
-        }
+    $result = $mysqli->query($sql);
+
+    while ($row = $result->fetch_array(MYSQLI_BOTH)) {
+        $categories[] = $row;
     }
+    $result->free();
+    //copy categories array for generating the dropdowns.  Reuse of categories would mess with its internal pointer so better safe than sorry here
+    $categorylist = $categories;
+    print_r ($categorylist);
 
-    for ($z = 0; $z < $categoryCount; $z++) {
+    foreach($categories as $category) {
         echo "<fieldset>";
-        if ($categoryOverride[$z] == 0) {
-            echo "<legend>" . $categoryName[$z] . "</legend>";
+        if ($category['category_useOverride'] == 0) {
+            echo "<legend>" . $category['category_name'] . "</legend>";
         } else {
-            echo "<legend>" . $categoryName[$z] . " - Tax Override: " . $categoryTax[$z] . "%</legend>";
+            echo "<legend>" . $category['category_name'] . " - Tax Override: " . $category['category_taxOverride'] . "%</legend>";
         }
 
         echo "<table class='Display' border=''>";
@@ -134,25 +82,25 @@ function AccessGranted()
         echo "<th>Item Category</th>";
         echo "<tr>";
 
-        for ($i = 0; $i < $itemCount; $i++) {
-            if ($itemType[$i] == $categoryIds[$z]) {
+        foreach ($Items as $item) {
+            if ($item['item_type'] == $category['category_id']) {
                 echo "<tr>";
-                echo "<td><input type = 'text' size='35'  readonly='readonly' name = 'oldItemname"
-                    . $itemId[$i] . "' value = '" . $itemName[$i] . "' /></td>";
-                echo "<td><input type = 'text' style='text-align:right' name = 'oldValue"
-                    . $itemId[$i] . "' value = '" . number_format($itemValue[$i], 0, '.', ',') . "' /></td>";
-                echo "<td><input type = 'text' name = 'oldOrder"
-                    . $itemId[$i] . "' value = '" . $itemOrder[$i] . "' /></td>";
-                echo "<td><select name = 'oldType" . $itemId[$i] . "'>";
-                for ($q = 0; $q < $categoryCount; $q++) {
-                    if ($categoryIds[$q] == $itemType[$i]) {
-                        echo "<option value = '" . $categoryIds[$q] . "' selected='selected'>" . $categoryName[$q] . "</option>";
-                    } else {
-                        echo "<option value = '" . $categoryIds[$q] . "'>" . $categoryName[$q] . "</option>";
+                echo "<td>".$item['item_name']."</td>";
+                echo "<input type='hidden' name='itemupdate[".$item['item_id']."][id]' value ='".$item['item_id']."'/></td>";
+                echo "<td><input type = 'text' style='text-align:right' name = 'itemupdate[".$item['item_id']."][value]' value = '" . number_format($item['item_iskValue'], 0, '.', ',') . "' /></td>";
+                echo "<td><input type = 'text' name = 'itemupdate[".$item['item_id']."][order]' value = '" . $item['item_order'] . "' /></td>";
+                echo "<td><select name = 'itemupdate[".$item['item_id']."][type]'>";
+                foreach ($categorylist as $categoryoption){
+                    echo "<option value=".$categoryoption['category_id'];
+                    if ($categoryoption['category_id'] == $item['item_type']){
+                        echo " selected = 'selected'";
                     }
+                    echo ">".$categoryoption['category_name'];
+                    echo "</option>";
                 }
-                echo "</select></td>";
-                echo "</tr>";
+
+            echo "</select></td>";
+            echo "</tr>";
             }
         }
 
@@ -253,21 +201,7 @@ echo "\n";
 
 </div>
 <!-- InstanceEndEditable -->
-<footer align="center">
-    EVE Online, the EVE logo, EVE and all associated logos and designs are the intellectual property of CCP hf.
-    <br/>
-    All artwork, screenshots, characters, vehicles, storylines, world facts or other recognizable features of the
-    intellectual property relating to these trademarks are likewise the intellectual property of CCP hf.
-    <br/>
-    EVE Online and the EVE logo are the registered trademarks of CCP hf. All rights are reserved worldwide. All other
-    trademarks are the property of their respective owners.
-    <br/>
-    CCP hf. has granted permission to tdsin.net to use EVE Online and all associated logos and designs for promotional
-    and information purposes on its website but does not endorse, and is not in any way affiliated with, tdsin.net.
-    <br/>
-    CCP is in no way responsible for the content on or functioning of this website, nor can it be liable for any damage
-    arising from the use of this website.
-</footer>
+<?php include('footer.html'); ?>
 </DIV>
 
 </td>
