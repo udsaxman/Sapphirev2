@@ -16,10 +16,6 @@ include 'header.html';
 <legend>Items</legend>
 <?php
 
-$categoryCount = 0;
-$categoryIds[0] = 0;
-$categoryName[0] = "";
-
 include 'connection.php';
 include 'functions.php';
 $powerRequired = 100;
@@ -64,7 +60,6 @@ function AccessGranted()
     $result->free();
     //copy categories array for generating the dropdowns.  Reuse of categories would mess with its internal pointer so better safe than sorry here
     $categorylist = $categories;
-    print_r ($categorylist);
 
     foreach($categories as $category) {
         echo "<fieldset>";
@@ -130,7 +125,15 @@ echo "</fieldset>";
 echo "</form>";
 echo "</p>";
 
-global $categoryCount, $categoryIds, $categoryName;
+//global $categoryCount, $categoryIds, $categoryName;
+$sql = "select * from Item_Category order by category_order";
+
+$result = $mysqli->query($sql);
+
+while ($row = $result->fetch_array(MYSQLI_BOTH)) {
+    $categories[] = $row;
+}
+$result->free();
 
 echo "\n";
 echo "<script type = 'text/javascript'>";
@@ -141,19 +144,6 @@ echo "//from TDSInItems.php";
 echo "\n";
 echo "var count = 0;";
 echo "\n";
-echo "var catName = new Array();";
-echo "\n";
-echo "var catIds = new Array();";
-echo "\n";
-echo "var catCount = " . $categoryCount . ";";
-echo "\n";
-for ($x = 0; $x < $categoryCount; $x++) {
-    echo "catName[" . $x . "] = \"" . $categoryName[$x] . "\";";
-    echo "\n";
-    echo "catIds[" . $x . "] = \"" . $categoryIds[$x] . "\";";
-    echo "\n";
-}
-
 echo "function newItem()";
 echo "\n";
 echo "{";
@@ -162,28 +152,25 @@ echo "var result = '';";
 echo "\n";
 echo "result += \"<label>ItemName:</label>\";";
 echo "\n";
-echo "result += \"<input type = 'text' name = 'newItemname\" + count + \"' />\";";
+echo "result += \"<input type = 'text' name = 'newItems[\" + count + \"][name]' />\";";
 echo "\n";
 echo "result += \"<label>ItemType:</label>\";";
 echo "\n";
-echo "result += \"<select name = 'selType\" + count + \"'>\"";
+echo "result += \"<select name = 'newItems[\" + count + \"][type]' />\";";
 echo "\n";
-echo "for(var y = 0; y < catCount; y++)";
-echo "{";
-echo "\n";
-echo "result += \"<option value = '\"+catIds[y]+\"'>\"+catName[y]+\"</option>\";";
-echo "\n";
-echo "}";
-echo "\n";
-echo "result += \"</select>\"";
+echo "result += \"";
+foreach ($categories as $category){
+    echo "<option value=".$category['category_id'].">".$category['category_name']."</option>";
+ }
+echo "</select>\"";
 echo "\n";
 echo "result += \"<label>ItemValue:</label>\";";
 echo "\n";
-echo "result += \"<input type = 'text' style='text-align:right' name = 'newValue\" + count +\"' />\";";
+echo "result += \"<input type = 'text' style='text-align:right' name = 'newItems[\" + count + \"][value]' />\";";
 echo "\n";
 echo "result += \"<label>ItemOrder:</label>\";";
 echo "\n";
-echo "result += \"<input type = 'text' name = 'newOrder\" + count +\"' />\";";
+echo "result += \"<input type = 'text' name = 'newItems[\" + count + \"][order]' />\";";
 echo "\n";
 echo "result += \"<br />\";";
 echo "\n";
@@ -193,10 +180,12 @@ echo "count += 1;";
 echo "\n";
 echo "}";
 echo "\n";
-echo "//]]>";
+echo "//>";
 echo "\n";
 echo "</script>";
 echo "\n";
+
+
 ?>
 
 </div>
