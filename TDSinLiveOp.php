@@ -12,9 +12,9 @@ include('header.html');
 
 
                          <form action="TDSinLiveOp.php"
-                          method="">
+                          method="post">
                 <fieldset>
-                            <legend>TDSIN LiveOps Tracker</legend>
+                    <legend>TDSIN LiveOps Tracker</legend>
 <?php
 include 'connection.php';
 include 'functions.php';
@@ -25,9 +25,10 @@ include 'functions.php';
 
             if (isset($_SESSION['current_op']))
             {
-                $user_id = $_SESSION["userID"];
-                $currentOp = $_SESSION["current_op"];
+                $user_id = $_SESSION['userID'];
+                $currentOp = $_SESSION['current_op'];
                 //check that op is still active
+                //echo $currentOp;
                 if(CheckOpActive($currentOp)){
 
 
@@ -67,16 +68,18 @@ include 'functions.php';
                     echo "</table>";
 
                     echo "<input type = 'submit' name='leave' id='leave' value = 'Leave Op'  />";
+                    header("Refresh:10");
 
-                    if(isset($_REQUEST['leave']))
+                    if(isset($_POST['leave']))
                     {
                         LeaveOp($_SESSION["current_op"], $_SESSION["userID"]);
                         header("Refresh:0");
                     }
 
-                }else{
+               }else{
                     //op is no longer active, unset session variablet to send user back to list
                     unset($_SESSION["current_op"]);
+                    header('Refresh:0');
                 }
 
 
@@ -94,9 +97,6 @@ include 'functions.php';
                    echo "<select name = 'selOp'>";
                     foreach ($OPArray as $oplist){
                     echo "<option value=".$oplist['LiveOp_ID'];
-                    if ($oplist['LiveOp_ID'] == $selectedOp){
-                        echo " selected = 'selected'";
-                    }
                     echo ">".$oplist['LiveOp_Name'];
                     echo "</option>";
                 }
@@ -105,10 +105,11 @@ include 'functions.php';
 
                 echo "<input type = 'submit' value = 'Join'  />";
 
-                if (isset($_REQUEST['selOp'])) {
+                if (isset($_POST['selOp'])) {
                 //code to join op
 
-                    JoinOp($_REQUEST['selOp'],$_SESSION['userID']);
+                    JoinOp($_POST['selOp'],$_SESSION['userID']);
+                    header('Location: ./TDSinLiveOp.php');
 
                 }
             }
