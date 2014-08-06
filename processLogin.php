@@ -33,9 +33,9 @@ $strSearch = "'";
 //$strSearch2 = "*";
 $strSearch3 = "\"";
 
-$pos = stripos($PasswordOne, $strSearch);
+$pos = stripos($Password, $strSearch);
 //$pos2 = stripos($passwordOne, $strSearch2);
-$pos3 = stripos($PasswordOne, $strSearch3);
+$pos3 = stripos($Password, $strSearch3);
 
 if ($pos === false && $pos3 === false) {
 } else {
