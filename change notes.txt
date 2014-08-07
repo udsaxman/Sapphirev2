@@ -1,0 +1,4 @@
+sapphire notes:
+
+edited sp_UpdateItemCategory:
+Removed name update because that should be a given.
