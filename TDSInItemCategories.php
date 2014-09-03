@@ -17,6 +17,7 @@ include('header.html');
 
     include 'connection.php';
     include 'functions.php';
+
     $powerRequired = CheckAccess('item_category');
 
     if (isset($_SESSION["power"]) && isset($_SESSION["userName"])) {
@@ -31,42 +32,18 @@ include('header.html');
 
     function AccessGranted()
     {
-        global $conn;
+        global $mysqli;
         echo "<form action = 'processItemCategories.php' method = 'post'>";
         echo "<fieldset>";
         echo "<legend>Item Categories</legend>";
 
-        $catIds[0] = 0;
-        $catNames[0] = "None";
-        $catOrders[0] = 0;
-        $catTaxs[0] = 0;
-        $catOverrides[0] = 0;
-        $catCount = 0;
+        $sql = "select * from Item_Category order by category_order";
 
-        $sql = "Select * From Item_Category Order By category_order";
-        $result = mysql_query($sql, $conn) or die(mysql_error());
+        $result = $mysqli->query($sql);
 
-        while ($row = mysql_fetch_assoc($result)) {
-            foreach ($row as $name => $value) {
-                if ($name == "category_id") {
-                    $catIds[$catCount] = $value;
-                }
-                if ($name == "category_name") {
-                    $catNames[$catCount] = $value;
-                }
-                if ($name == "category_order") {
-                    $catOrders[$catCount] = $value;
-                }
-                if ($name == "category_taxOverride") {
-                    $catTaxs[$catCount] = $value;
-                }
-                if ($name == "category_useOverride") {
-                    $catOverrides[$catCount] = $value;
-                    $catCount++;
-                }
-            }
+        while ($row = $result->fetch_array(MYSQLI_BOTH)) {
+            $categories[] = $row;
         }
-
         echo "<table class='Display' border=''>";
 
         echo "<tr>";
@@ -76,20 +53,16 @@ include('header.html');
         echo "<th>Use Tax</th>";
         echo "</tr>";
 
-        for ($i = 0; $i < $catCount; $i++) {
+        foreach($categories as $category) {
             echo "<tr>";
-            echo "<td><input type = 'text' size='35' name = 'oldCatName" .
-                $catIds[$i] . "' value = '" . $catNames[$i] . "' /></td>";
-            echo "<td><input type = 'text' size='5' name = 'oldCatOrder" .
-                $catIds[$i] . "' value = '" . $catOrders[$i] . "' /></td>";
-            echo "<td><input type = 'text' size='10' name = 'oldCatTax" .
-                $catIds[$i] . "' value = '" . $catTaxs[$i] . "' /></td>";
-            if ($catOverrides[$i] == 1) {
-                echo "<td><input type = 'checkbox' name = 'oldCatOverride" .
-                    $catIds[$i] . "' checked='checked' value = 'yes' /></td>";
+            echo "<td>".$category['category_name']."</td>";
+            echo "<input type='hidden' name='catupdate[".$category['category_id']."][id]' value ='".$category['category_id']."'/></td>";
+            echo "<td><input type = 'text' name = 'catupdate[".$category['category_id']."][order]' value = '" . $category['category_order'] . "' /></td>";
+            echo "<td><input type = 'text' name = 'catupdate[".$category['category_id']."][tax]' value = '" . $category['category_taxOverride'] . "' /></td>";
+            if ($category['category_useOverride'] == 1) {
+                echo "<td><input type = 'checkbox' name = 'catupdate[".$category['category_id']."][override]' checked='checked' value = 'yes' /></td>";
             } else {
-                echo "<td><input type = 'checkbox' name = 'oldCatOverride" .
-                    $catIds[$i] . "' value = 'yes' /></td>";
+                echo "<td><input type = 'checkbox' name = 'catupdate[".$category['category_id']."][override]' value = 'yes' /></td>";
             }
         }
         echo "</table>";
@@ -131,13 +104,13 @@ include('header.html');
         function newCategory() {
             var result = "";
             result += "<label>CategoryName:</label>";
-            result += "<input type = 'text' name = 'newCatName" + count + "' />";
+            result += "<input type = 'text' name = 'newCat[" + count + "][name]' />";
             result += "<label>CategoryTax:</label>";
-            result += "<input type = 'text' style='text-align:right' name = 'newCatTax" + count + "'  value = '0' />";
+            result += "<input type = 'text' style='text-align:right' name = 'newCat[" + count + "][tax]'  value = '0' />";
             result += "<label>UseTax:</label>";
-            result += "<input type = 'checkbox' name = 'newCatOverride" + count + "' />";
+            result += "<input type = 'checkbox' name =  'newCat[" + count + "][override]' />";
             result += "<label>CategoryOrder:</label>";
-            result += "<input type = 'text' name = 'newCatOrder" + count + "' />";
+            result += "<input type = 'text' name = 'newCat[" + count + "][order]' />";
             result += "<br />";
             divOutput.innerHTML += result;
 
