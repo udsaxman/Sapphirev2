@@ -8,20 +8,29 @@ foreach ($_POST['itemupdate'] as $item){
 
     //update item value
         $sql = "CALL sp_UpdateItemValue(".$item['id'].", ".$item['value'].")";
-        echo $sql."</br>";
-        $mysqli->query($sql);
+        $result = $mysqli->query($sql);
+        if (!$result) {
+            Fail();
+        }
+        $result->close();
 
 
      //update item order
         $sql = "CALL sp_UpdateItemOrder(".$item['id'].",". $item['order']. ")";
-        echo $sql."</br>";
-        $mysqli->query($sql);
+        $result = $mysqli->query($sql);
+        if (!$result) {
+            Fail();
+        }
+        $result->close();
 
 
     //update item type
         $sql = "CALL sp_UpdateItemType(".$item['id'].",".$item['type'] .")";
-        echo $sql."</br>";
-       $mysqli->query($sql);
+        $result = $mysqli->query($sql);
+        if (!$result) {
+            Fail();
+        }
+        $result->close();
      }
 }
 
@@ -30,22 +39,28 @@ foreach ($_POST['newItems'] as $newitem){
 
         //create new item
         $sql = "CALL sp_AddNewItem('".$newitem['name']."', ".$newitem['type'].", ".$newitem['value'].", ".$newitem['order'].")";
-        echo $sql."</br>";
-        $mysqli->query($sql);
+        $result = $mysqli->query($sql);
+        if (!$result) {
+            Fail();
+        }
+        $result->close();
+
     }
 }
 
+
+$mysqli->close();
 
 Success();
 
 function Fail()
 {
-    header('Location: ./TDSInError.php');
+    //header('Location: ./TDSInError.php');
 }
 
 function Success()
 {
-    header('Location: ./TDSInAdminTools.php');
+    //header('Location: ./TDSInAdminTools.php');
     //echo "Test";
 }
 
