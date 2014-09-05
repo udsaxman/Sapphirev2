@@ -57,9 +57,19 @@ function JoinOp($opID, $memberID)
    // echo $sql;
     if($mysqli->query($sql) === TRUE){
         $_SESSION["current_op"] = $opID;
-        echo $_SESSION["current_op"]."set";
+        //echo $_SESSION["current_op"]."set";
     }
     $sql = "CALL sp_LeaveLiveOp(" . $opID. ", " . $memberID . ")";
 
+}
+function CreateOp($FCID, $OPName)
+{
+    global $mysqli;
+
+    $query =" Insert into LiveOps (LiveOp_FC_ID,LiveOp_Start,LiveOp_Name,LiveOp_Active) Values(".$FCID.",Now(),".$OPName.",1);";
+    mysqli_query($mysqli, $query);
+    $_SESSION["current_op"] = mysqli_insert_id($mysqli);
+
+    mysqli_close($mysqli);
 }
 ?>
