@@ -9,8 +9,6 @@ include('header.html');
                     <br/>
                     <br/>
 
-
-
                          <form action="TDSinLiveOp.php"
                           method="post">
                 <fieldset>
@@ -29,7 +27,7 @@ include 'functions.php';
                 $currentOp = $_SESSION['current_op'];
                 //check that op is still active
                 //echo $currentOp;
-                if(CheckOpActive($currentOp)){
+                if(CheckOpActive($currentOp,$user_id)){
 
 
                     $sql = "select LiveOp_Name, LiveOp_Shares, LiveOp_Start, LiveOp_JoinTime, LiveOp_Sites, Users.user_name as FC from LiveOps JOIN LiveOp_Attendance on LiveOps.LiveOp_ID = LiveOp_Attendance.LiveOp_ID JOIN Users on LiveOps.LiveOp_FC_ID = Users.user_id WHERE member_id = " . $user_id." AND LiveOps.LiveOp_ID = ". $currentOp;
@@ -103,9 +101,8 @@ include 'functions.php';
                 }
 
                 echo "</select>";
-
                 echo "</br>";
-                echo "<a href = './TDSInCreateLiveOp.php'><input type = 'button' value = 'Create New Op'  /></a>";
+                echo "<a href = './TDSinCreateLiveOp.php'><input type = 'button' value = 'Create New Op'  /></a>";
 
                 echo "<input type = 'submit' value = 'Join'  />";
 
@@ -121,7 +118,6 @@ include 'functions.php';
     echo "<p> You are not logged in as anyone, thus you cannot see this page </p>";
 
 }
-
 ?>
                 </fieldset>
                     </form>
