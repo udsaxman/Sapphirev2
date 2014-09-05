@@ -86,6 +86,7 @@ include 'functions.php';
             }else{
                 //echo "op not set";
                 //$sql = select op_name from Ops;
+                echo "Please select an OP or Create a new Op</br>";
                 $sql = "Select LiveOp_ID, LiveOp_Name From LiveOps where LiveOp_Active = 1 order by LiveOp_ID desc LIMIT 0,20";
                 $result = $mysqli->query($sql);
 
@@ -102,6 +103,9 @@ include 'functions.php';
                 }
 
                 echo "</select>";
+
+                echo "</br>";
+                echo "<a href = './TDSInCreateLiveOp.php'><input type = 'button' value = 'Create New Op'  /></a>";
 
                 echo "<input type = 'submit' value = 'Join'  />";
 
