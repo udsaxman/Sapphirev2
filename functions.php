@@ -18,23 +18,25 @@ function CheckAccess($pagename)
 
 }
 
-function CheckOpActive($opID)
+function CheckOpActive($opID,$user_id)
 {
     global $mysqli;
     $sql = "SELECT
-                LiveOp_Active
+                LiveOp_Active, LiveOp_FC_ID
             FROM
                 LiveOps
             WHERE
                 LiveOp_ID = ".$opID;
     $result = $mysqli->query($sql);
-    $isactive= $result -> fetch_row();
-    if ($isactive[0] == 1){
+    $OpActive = mysqli_fetch_assoc($result);
+    if ($OpActive['LiveOp_FC_ID']== $user_id and $OpActive['LiveOp_Active']== 1)
+    {
+        header('Location: ./TDSinLiveOp.php');
+    } elseif($OpActive['LiveOp_Active'] == 1){
         return true;
-    }else{
+    } else {
         return false;
     }
-
 }
 
 function LeaveOp($opID, $memberID)
@@ -66,10 +68,12 @@ function CreateOp($FCID, $OPName)
 {
     global $mysqli;
 
-    $query =" Insert into LiveOps (LiveOp_FC_ID,LiveOp_Start,LiveOp_Name,LiveOp_Active) Values(".$FCID.",Now(),".$OPName.",1);";
+    $query =" Insert into LiveOps (LiveOp_FC_ID,LiveOp_Start,LiveOp_Name,LiveOp_Active) Values(".$FCID.",Now(),'".$OPName."',1);";
+    echo $query;
     mysqli_query($mysqli, $query);
-    $_SESSION["current_op"] = mysqli_insert_id($mysqli);
-
+    $NewOpID = mysqli_insert_id($mysqli);
+    JoinOp($NewOpID,$FCID);
     mysqli_close($mysqli);
+    header("Location: ./TDSinLiveOpFC.php");
 }
 ?>
