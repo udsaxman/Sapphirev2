@@ -10,68 +10,53 @@ include 'header.html';
                     <br/>
                     <br/>
                     <br/>
-                    <?php
-                    include 'connection.php';
-                    include 'functions.php';
-                    $powerRequired = 100;
-//
-//
-//
-//                    $sql = "Select
-//					    	access_power
-//					        From
-//						      Access
-//					        Where
-//						      access_page = 'edit_op'";
-//
-//                    $result = $mysqli->query($sql);
-//                    $AccessReq = mysqli_fetch_assoc($result);
-//                    $powerRequired = $AccessReq['access_power'];
+    <?php
+            include 'connection.php';
+            include 'functions.php';
 
-                    $powerRequired = CheckAccess('edit_op');
 
-                    if (isset($_SESSION["power"]) && isset($_SESSION["userName"])) {
-                        if ($_SESSION["power"] >= $powerRequired) {
-                            AccessGranted();
-                        } elseif ($_SESSION["power"] < $powerRequired) {
-                            AccessDenied(1);
+                if(!isset($_SESSION["userID"])){
+                    AccessDenied(0);
+                }
+                if(CheckUserAccess($_SESSION["userID"],"speed_op")){
+
+                    $sql = "Select op_id, op_name From Ops where op_processor = 0 order by op_id desc";
+                    $result = $mysqli->query($sql);
+                    while ($row = $result->fetch_assoc()) {
+                        $OPArray[] = $row;
+                    }
+                    $result->free();
+
+
+                    echo "<form action='TDSInSpeedOpConfirm.php' method='post' />";
+
+                    echo "Select a pending OP or Create new OP:  ";
+                    echo "<select name = 'selOp'>";
+                    echo "<option value=0>New Op</option>";
+                    foreach ($OPArray as $oplist){
+                        echo "<option value=".$oplist['op_id'];
+                        if ($oplist['op_id'] == $selectedOp){
+                            echo " selected = 'selected'";
                         }
-                    } else {
-                        AccessDenied(0);
+                        echo ">".$oplist['op_name'];
+                        echo "</option>";
                     }
+                    echo "</select>";
+                    echo "<fieldset>";
+                    echo "<legend>Hanger Data</legend>";
+                    echo "<textarea rows='40' cols='100' name='opData'></textarea>";
+                    echo "<br />";
+                    echo "<input type='submit' value='Submit' />";
+                    echo "</fieldset>";
+                    echo "</form>";
 
-                    function AccessGranted()
-                    {
-                        global $conn;
 
-                        echo "<form action='TDSInSpeedOpConfirm.php' method='post' />";
-                        echo "<fieldset>";
-                        echo "<legend>Hanger Data</legend>";
-                        echo "<textarea rows='40' cols='100' name='opData'></textarea>";
-                        echo "<br />";
-                        echo "<input type='submit' value='Submit' />";
-                        echo "</fieldset>";
-                        echo "</form>";
                     }
+                else{
+                    AccessDenied(1);
+                }
 
-                    function AccessDenied($error)
-                    {
-                        echo "</fieldset>";
-                        echo "</form>";
-
-                        switch ($error) {
-                            case 0: //There is no Admin in Session, you have not loggin in yet
-                                echo "You have not yet logged in yet, please log in";
-                                break;
-                            case 1: //You are Not an Admin
-                                echo "You do not have the rights to view this page";
-                                break;
-                            default:
-                                echo "You have been denied access to this page";
-                        }
-                    }
-
-                    ?>
+                 ?>
 
                 </div>
                 <!-- InstanceEndEditable -->
