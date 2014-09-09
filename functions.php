@@ -17,6 +17,40 @@ function CheckAccess($pagename)
         Return $RankResult['access_power'];
 
 }
+function CheckUserAccess($userid,$pagename)
+{
+    global $mysqli;
+
+    $sql = "select
+                rank_power as user_power
+            from
+                Ranks
+            JOIN
+                Users
+            ON
+                Users.rank_id = Ranks.rank_id
+            WHERE user_id =".$userid."'";
+
+    $result = $mysqli->query($sql);
+    $Userpower = mysqli_fetch_assoc($result);
+
+    $sql = "Select
+				access_power
+			From
+				Access
+			Where
+				access_page = '".$pagename."'";
+
+    $result = $mysqli->query($sql);
+    $PowerRequired = mysqli_fetch_assoc($result);
+
+    IF($Userpower['user_power']>= $PowerRequired['access_power']){
+        return true;
+    }else {
+        return false;
+    }
+
+}
 
 function CheckOpActive($opID,$user_id)
 {
@@ -76,4 +110,6 @@ function CreateOp($FCID, $OPName)
     mysqli_close($mysqli);
     header("Location: ./TDSinLiveOpFC.php");
 }
+
+
 ?>
