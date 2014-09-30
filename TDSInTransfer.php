@@ -19,27 +19,10 @@ include 'functions.php'
 <legend>Transfer Type</legend>
 <?php
 
-//include 'connection.php';
-//include 'functions.php';
 $powerRequired = 100;
 
 $powerRequired = CheckAccess('transfer');
-//$sql = "Select
-//			access_power
-//		From
-//			Access
-//		Where
-//			access_page = 'transfer'";
-//
-//$result = mysql_query($sql, $conn) or die(mysql_error());
-//
-//while ($row = mysql_fetch_assoc($result)) {
-//    foreach ($row as $name => $value) {
-//        if ($name == "access_power") {
-//            $powerRequired = $value;
-//        }
-//    }
-//}
+
 
 if (isset($_SESSION["power"])) {
     if ($_SESSION["power"] >= $powerRequired) {
@@ -117,6 +100,7 @@ function AccessGranted()
 function Paycheck()
 {
     include 'connection.php';
+    global $conn;
     $theName = "";
     $today = date("Y.m.d");
 
@@ -234,6 +218,7 @@ function Paycheck()
 
 function Corp()
 {
+    global $conn;
      include 'connection.php';
     $theName = "";
     $today = date("Y.m.d");
@@ -351,23 +336,6 @@ function Corp()
     echo "\n";
     echo "</script>";
     echo "\n";
-}
-
-function AccessDenied($error)
-{
-    echo "</fieldset>";
-    echo "</form>";
-
-    switch ($error) {
-        case 0: //There is no Admin in Session, you have not loggin in yet
-            echo "You have not yet logged in yet, please log in";
-            break;
-        case 1: //You are Not an Admin
-            echo "You do not have the rights to view this page";
-            break;
-        default:
-            echo "You have been denied access to this page";
-    }
 }
 
 ?>
