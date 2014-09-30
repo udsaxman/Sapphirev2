@@ -15,20 +15,6 @@ include 'connection.php';
 include 'functions.php';
 $powerRequired = 100;
 
-
-//
-//$sql = "Select
-//						access_power
-//					From
-//						Access
-//					Where
-//						access_page = 'edit_op'";
-//
-//$result = $mysqli->query($sql);
-//
-//$AccessReq = mysqli_fetch_array($result, MYSQL_ASSOC);
-
-
 $powerRequired = CheckAccess('edit_op');
 
 
@@ -499,20 +485,6 @@ function AccessGranted()
 
     } else {
         echo "<p> You are not logged in as anyone, thus you cannot see this page </p>";
-    }
-}
-
-function AccessDenied($error)
-{
-    switch ($error) {
-        case 0: //There is no Admin in Session, you have not loggin in yet
-            echo "You have not yet logged in yet, please log in";
-            break;
-        case 1: //You are Not an Admin
-            echo "You do not have the rights to view this page";
-            break;
-        default:
-            echo "You have been denied access to this page";
     }
 }
 
