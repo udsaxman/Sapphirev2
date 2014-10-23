@@ -13,27 +13,13 @@ include 'header.html';
                     <?php
 
                     include 'connection.php';
-
+                    include 'functions.php';
                     $powerRequired = 100;
 
-                    $sql = "Select
-						access_power
-					From
-						Access
-					Where
-						access_page = 'reset_password'";
+                    $powerRequired = CheckAccess('reset_password');
 
-                    $result = mysql_query($sql, $conn) or die(mysql_error());
 
-                    while ($row = mysql_fetch_assoc($result)) {
-                        foreach ($row as $name => $value) {
-                            if ($name == "access_power") {
-                                $powerRequired = $value;
-                            }
-                        }
-                    }
-
-                    if (isset($_SESSION["power"])) {
+                    if (isset($_SESSION["power"]) && isset($_SESSION["userName"])) {
                         if ($_SESSION["power"] >= $powerRequired) {
                             AccessGranted();
                         } elseif ($_SESSION["power"] < $powerRequired) {
@@ -42,7 +28,6 @@ include 'header.html';
                     } else {
                         AccessDenied(0);
                     }
-
                     function AccessGranted()
                     {
                         global $conn;
@@ -119,24 +104,7 @@ include 'header.html';
 
                 </div>
                 <!-- InstanceEndEditable -->
-                <footer align="center">
-                    EVE Online, the EVE logo, EVE and all associated logos and designs are the intellectual property of
-                    CCP hf.
-                    <br/>
-                    All artwork, screenshots, characters, vehicles, storylines, world facts or other recognizable
-                    features of the intellectual property relating to these trademarks are likewise the intellectual
-                    property of CCP hf.
-                    <br/>
-                    EVE Online and the EVE logo are the registered trademarks of CCP hf. All rights are reserved
-                    worldwide. All other trademarks are the property of their respective owners.
-                    <br/>
-                    CCP hf. has granted permission to tdsin.net to use EVE Online and all associated logos and designs
-                    for promotional and information purposes on its website but does not endorse, and is not in any way
-                    affiliated with, tdsin.net.
-                    <br/>
-                    CCP is in no way responsible for the content on or functioning of this website, nor can it be liable
-                    for any damage arising from the use of this website.
-                </footer>
+            <?php include('footer.html'); ?>
             </DIV>
 
         </td>
